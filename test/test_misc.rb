@@ -51,7 +51,7 @@ END_HTML
 		</html>
 END_HTML
 
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       premailer = Premailer.new(html, :with_html_string => true, :adapter => adapter)
       premailer.to_inline_css
 
@@ -95,7 +95,7 @@ END_HTML
 		</body>
 		</html>
 END_HTML
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       premailer = Premailer.new(html, :with_html_string => true, :preserve_styles => true,  :adapter => adapter)
       premailer.to_inline_css
       assert_equal 1, premailer.processed_doc.search('head link').length
@@ -148,7 +148,7 @@ END_HTML
     </body> </html>
 END_HTML
 
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       premailer = Premailer.new(html, :with_html_string => true, :adapter => adapter)
       premailer.to_inline_css
 
@@ -311,13 +311,13 @@ END_HTML
     </html>
 END_HTML
 
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       premailer = Premailer.new(html, :with_html_string => true, :remove_scripts => true, :adapter => adapter)
       premailer.to_inline_css
       assert_equal 0, premailer.processed_doc.search('script').length
     end
 
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       premailer = Premailer.new(html, :with_html_string => true, :remove_scripts => false, :adapter => adapter)
       premailer.to_inline_css
       assert_equal 1, premailer.processed_doc.search('script').length
@@ -336,7 +336,7 @@ END_HTML
     </html>
 END_HTML
 
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       premailer = Premailer.new(html, :with_html_string => true, :adapter => adapter)
       assert_match 'bgcolor="#FF0000"', premailer.to_inline_css
     end
@@ -384,7 +384,7 @@ END_HTML
     </body>
     </html>
 END_HTML
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       premailer = Premailer.new(html, :with_html_string => true, :adapter => adapter)
       assert_match 'content: url(good.png)', premailer.to_inline_css
     end
@@ -401,7 +401,7 @@ END_HTML
     </body>
     </html>
 END_HTML
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       premailer = Premailer.new(html, :with_html_string => true, :adapter => adapter)
       assert_match /content:\s*url\(data:image\/png;base64,LOTSOFSTUFF\)/, premailer.to_inline_css
     end

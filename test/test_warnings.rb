@@ -13,7 +13,7 @@ class TestWarnings < Premailer::TestCase
 		</html>
 END_HTML
 
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       warnings = get_warnings(html, adapter)
       assert_equal 2, warnings.length
       assert warnings.any? { |w| w[:message] == 'form HTML element'}
@@ -29,7 +29,7 @@ END_HTML
     </body></html>
 END_HTML
 
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       warnings = get_warnings(html, adapter)
       assert_equal 2, warnings.length
       assert warnings.any? { |w| w[:message] == 'height CSS property'}
@@ -45,7 +45,7 @@ END_HTML
     </body></html>
 END_HTML
 
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       warnings = get_warnings(html, adapter)
       assert_equal 1, warnings.length
       assert warnings.any? { |w| w[:message] == 'margin-top CSS property'}
@@ -60,7 +60,7 @@ END_HTML
     </body></html>
 END_HTML
 
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       warnings = get_warnings(html, adapter)
       assert_equal 1, warnings.length
       assert warnings.any? { |w| w[:message] == 'ismap HTML attribute'}
@@ -75,12 +75,12 @@ END_HTML
     </body></html>
 END_HTML
 
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       warnings = get_warnings(html, adapter, Premailer::Warnings::SAFE)
       assert_equal 2, warnings.length
     end
 
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       warnings = get_warnings(html, adapter, Premailer::Warnings::POOR)
       assert_equal 1, warnings.length
     end

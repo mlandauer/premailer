@@ -36,4 +36,7 @@ class Premailer::TestCase < Minitest::Test
     @doc = @premailer.processed_doc
   end
 
+  def adapters_to_test
+    [:nokogiri, :nokogiri_fast, :nokogumbo]
+  end
 end

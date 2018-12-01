@@ -25,21 +25,21 @@ class TestPremailer < Premailer::TestCase
   #end
 
   def test_detecting_html
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       remote_setup('base.html', :adapter => adapter)
       assert !@premailer.is_xhtml?
     end
   end
 
   def test_detecting_xhtml
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       remote_setup('xhtml.html', :adapter => adapter)
       assert @premailer.is_xhtml?
     end
   end
 
   def test_self_closing_xhtml_tags
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       remote_setup('xhtml.html', :adapter => adapter)
       assert_match /<br[\s]*\/>/, @premailer.to_s
       assert_match /<br[\s]*\/>/, @premailer.to_inline_css
@@ -47,7 +47,7 @@ class TestPremailer < Premailer::TestCase
   end
 
   def test_non_self_closing_html_tags
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       remote_setup('html4.html', :adapter => adapter)
       assert_match /<br>/, @premailer.to_s
       assert_match /<br>/, @premailer.to_inline_css
@@ -63,7 +63,7 @@ END_HTML
 
     qs = 'testing=123'
 
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       premailer = Premailer.new(html, :with_html_string => true, :link_query_string => qs, :adapter => adapter)
       premailer.to_inline_css
       refute_match /testing=123/, premailer.processed_doc.search('a').first.attributes['href'].to_s
@@ -71,7 +71,7 @@ END_HTML
   end
 
   def test_preserving_ignored_style_elements
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       local_setup('ignore.html', :adapter => adapter)
 
       assert_nil @doc.at('h1')['style']
@@ -79,7 +79,7 @@ END_HTML
   end
 
   def test_preserving_ignored_link_elements
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       local_setup('ignore.html', :adapter => adapter)
 
       assert_nil @doc.at('body')['style']
@@ -87,7 +87,7 @@ END_HTML
   end
 
   def test_importing_local_css
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       local_setup('base.html', :adapter => adapter)
 
       # noimport.css (print stylesheet) sets body { background } to red
@@ -99,7 +99,7 @@ END_HTML
   end
 
   def test_css_to_attributes
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       html = '<td style="background-color: #FFF;"></td>'
       premailer = Premailer.new(html, {:with_html_string => true, :adapter => adapter, :css_to_attributes => true})
       premailer.to_inline_css
@@ -109,7 +109,7 @@ END_HTML
   end
 
   def test_avoid_changing_css_to_attributes
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       html = '<td style="background-color: #FFF;"></td>'
       premailer = Premailer.new(html, {:with_html_string => true, :adapter => adapter, :css_to_attributes => false})
       premailer.to_inline_css
@@ -118,7 +118,7 @@ END_HTML
   end
 
   def test_importing_remote_css
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       remote_setup('base.html', :adapter => adapter)
 
       # noimport.css (print stylesheet) sets body { background } to red
@@ -134,7 +134,7 @@ END_HTML
 
     css_string = IO.read(File.join(files_base, 'import.css'))
 
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       premailer = Premailer.new(File.join(files_base, 'no_css.html'), {:css_string => css_string, :adapter => adapter})
       premailer.to_inline_css
       @doc = premailer.processed_doc
@@ -157,7 +157,7 @@ END_HTML
   end
 
   def test_initialize_can_accept_io_object
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       io = StringIO.new('hi mom')
       premailer = Premailer.new(io, :adapter => adapter)
       assert_match /hi mom/, premailer.to_inline_css
@@ -165,7 +165,7 @@ END_HTML
   end
 
   def test_initialize_can_accept_html_string
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       premailer = Premailer.new('<p>test</p>', :with_html_string => true, :adapter => adapter)
       assert_match /test/, premailer.to_inline_css
     end
@@ -179,7 +179,7 @@ END_HTML
 		</body> </html>
 END_HTML
 
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       pm = Premailer.new(html, :with_html_string => true, :adapter => adapter, :escape_url_attributes => false)
       pm.to_inline_css
       doc = pm.processed_doc
@@ -197,7 +197,7 @@ END_HTML
 		</body> </html>
 END_HTML
 
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       pm = Premailer.new(html, :with_html_string => true, :remove_ids => true, :adapter => adapter)
       pm.to_inline_css
       doc = pm.processed_doc
@@ -216,7 +216,7 @@ END_HTML
     <div contenteditable="true" id="editable"> Test </div>
     </body> </html>
     ___
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       pm = Premailer.new(html, :with_html_string => true, :reset_contenteditable => true, :adapter => adapter)
       pm.to_inline_css
       doc = pm.processed_doc
@@ -233,7 +233,7 @@ END_HTML
     </body></html>
     html
 
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       pm = Premailer.new(html, :with_html_string => true, :adapter => adapter)
       assert_match /\n/, pm.to_inline_css
     end
@@ -255,7 +255,7 @@ END_HTML
 		</body> </html>
 END_HTML
 
-    [:nokogiri, :nokogiri_fast, :nokogumbo].each do |adapter|
+    adapters_to_test.each do |adapter|
       pm = Premailer.new(html, :with_html_string => true, :adapter => adapter)
       pm.to_inline_css
       doc = pm.processed_doc
